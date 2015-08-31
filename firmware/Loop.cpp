@@ -21,15 +21,17 @@ int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 	CallbackData* cb = new CallbackData(delay, cb);
 
 	timeouts.push_back(cb);
+
+	return cb->id();
 }
 
 void Loop::removeTimeout(int hnld)
 {
 	for(auto timeout : timeouts)
 	{
-		if(timeout.id() == hndl)
+		if(timeout->id() == hndl)
 		{
-			timeouts.remove(timeout);
+			timeouts->erase(timeout);
 		}
 	}
 }

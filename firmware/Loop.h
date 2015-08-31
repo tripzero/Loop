@@ -49,7 +49,7 @@ public:
 
 	void process();
 
-	int addTimeout(unsigned long delay, Callback);
+	int addTimeout(unsigned long delay, CallbackData::Callback);
 	void removeTimeout(int hndl);
 
 private: 
