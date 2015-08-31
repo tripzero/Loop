@@ -25,13 +25,13 @@ int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 	return cbd->id();
 }
 
-void Loop::removeTimeout(int hnld)
+void Loop::removeTimeout(int hndl)
 {
 	for(auto timeout : timeouts)
 	{
 		if(timeout->id() == hndl)
 		{
-			timeouts->erase(timeout);
+			timeouts.erase(timeout);
 			delete timeout;
 		}
 	}
