@@ -18,11 +18,11 @@ void Loop::process()
 
 int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 {
-	CallbackData* cb = new CallbackData(delay, cb);
+	CallbackData* cbd = new CallbackData(delay, cb);
 
-	timeouts.push_back(cb);
+	timeouts.push_back(cbd);
 
-	return cb->id();
+	return cbd->id();
 }
 
 void Loop::removeTimeout(int hnld)
@@ -32,6 +32,7 @@ void Loop::removeTimeout(int hnld)
 		if(timeout->id() == hndl)
 		{
 			timeouts->erase(timeout);
+			delete timeout;
 		}
 	}
 }

@@ -3,11 +3,15 @@
 
 #include <functional>
 #include <list>
+#include <memory>
+
+#include "spark_wiring_ticks.h"
 
 class CallbackData
 {
 public:
 	typedef std::function<void (void)> Callback;
+	typedef std::unique_ptr
 
 	CallbackData(unsigned long d, Callback cb)
 	:mRef(CallbackData::idCount++), mDelay(d), mCb(cb)
