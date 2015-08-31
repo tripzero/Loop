@@ -1,0 +1,7 @@
+{
+  "name": "Loop",
+  "author": "Kevron Rees",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Advanced Looping library with timeouts and stuff"
+}
