@@ -10,7 +10,7 @@ public:
 	typedef std::function<void (void)> Callback;
 
 	CallbackData(unsigned long d, Callback cb)
-	:mRef(CallbackData::idCount++), mDelay(delay), mCb(cb)
+	:mRef(CallbackData::idCount++), mDelay(d), mCb(cb)
 	{
 		mStarted = millis();
 	}
