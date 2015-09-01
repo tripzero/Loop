@@ -27,11 +27,13 @@ int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 
 void Loop::removeTimeout(int hndl)
 {
-	for(auto timeout : timeouts)
+	for(auto itr = timeouts.begin(); itr < timeouts.end();  itr++)
 	{
+		auto timeout = *itr;
+
 		if(timeout->id() == hndl)
 		{
-			timeouts.erase(timeout);
+			timeouts.erase(itr);
 			delete timeout;
 		}
 	}
