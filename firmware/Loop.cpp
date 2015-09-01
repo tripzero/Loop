@@ -27,7 +27,7 @@ int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 
 void Loop::removeTimeout(int hndl)
 {
-	for(auto itr = timeouts.begin(); itr < timeouts.end();  itr++)
+	for(auto itr = timeouts.begin(); itr != timeouts.end();  itr++)
 	{
 		auto timeout = *itr;
 
