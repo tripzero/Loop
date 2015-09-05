@@ -3,6 +3,12 @@
 Loop* Loop::loopInstance = nullptr;
 unsigned int CallbackData::idCount = 0;
 
+CallbackData::CallbackData(unsigned long d, Callback cb)
+:mRef(CallbackData::idCount++), mDelay(d), mCb(cb)
+{
+	mStarted = millis();
+}
+
 void Loop::process()
 {
 	for(auto timeout : timeouts)
@@ -78,12 +84,12 @@ void Loop::removeHysterisis(unsigned int hndl)
 {
 	for(auto itr = hysterisises.begin(); itr != hysterisises.end();  itr++)
 	{
-		auto timeout = *itr;
+		auto hyst = *itr;
 
-		if(timeout->id() == hndl)
+		if(hyst->id() == hndl)
 		{
 			hysterisises.erase(itr);
-			delete timeout;
+			delete hyst;
 			return;
 		}
 	}
