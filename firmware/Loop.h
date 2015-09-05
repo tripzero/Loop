@@ -3,9 +3,8 @@
 
 #include <functional>
 #include <list>
-#include <memory>
 
-#include "spark_wiring_ticks.h"
+unsigned long msCount();
 
 class CallbackData
 {
@@ -18,10 +17,12 @@ public:
 	unsigned long delay() { return mDelay; }
 	Callback callback() { return mCb; }
 	unsigned long started() { return mStarted; }
+	bool isSingleShot() { return mSshot; }
+	void setSingleShot(bool sshot) { mSshot = sshot; }
 	
 	virtual void reset()
 	{
-		mStarted = millis();
+		mStarted = msCount();
 	}
 
 	static unsigned int idCount;
@@ -31,6 +32,7 @@ private:
 	unsigned long mDelay;
 	Callback mCb;
 	unsigned long mStarted;
+	bool mSshot;
 };
 
 class HysterisisData: public CallbackData

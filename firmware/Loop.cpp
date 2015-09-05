@@ -1,25 +1,70 @@
 #include "Loop.h"
 
+#define PHOTON
+
+#if defined(PHOTON)
+#include "spark_wiring_ticks.h"
+#else
+#include <chrono>
+#include <iostream>
+#endif
+
 Loop* Loop::loopInstance = nullptr;
 unsigned int CallbackData::idCount = 0;
 
-CallbackData::CallbackData(unsigned long d, Callback cb)
-:mRef(CallbackData::idCount++), mDelay(d), mCb(cb)
+std::list<unsigned int> toRemove;
+
+unsigned long msCount()
 {
-	mStarted = millis();
+#if defined(PHOTON)
+	return millis();
+#else
+	auto tm = std::chrono::steady_clock::now();
+	double time = std::chrono::duration_cast<std::chrono::milliseconds>(tm.time_since_epoch()).count();
+	return time;
+#endif
+}
+
+void debug(const char* msg)
+{
+#if !defined(PHOTON)
+	std::cout<<msg<<std::endl;
+#endif
+}
+
+CallbackData::CallbackData(unsigned long d, Callback cb)
+:mRef(CallbackData::idCount++), mDelay(d), mCb(cb), mSshot(false)
+{
+	mStarted = msCount();
 }
 
 void Loop::process()
 {
 	for(auto timeout : timeouts)
 	{
-		if( millis() - timeout->started() > timeout->delay() )
+		if( msCount() - timeout->started() > timeout->delay() )
 		{
 			// call the timeout
 			timeout->callback()();
-			timeout->reset();
+			
+			if(timeout->isSingleShot())
+			{
+				toRemove.push_back(timeout->id());
+			}
+			else 
+			{
+				timeout->reset();
+			}
 		}
 	}
+
+	for(auto timeout : toRemove)
+	{
+		removeTimeout(timeout);
+	}
+
+	if(toRemove.size())
+		toRemove.clear();
 
 	for(auto hysterisis : hysterisises)
 	{
@@ -64,11 +109,9 @@ void Loop::removeTimeout(unsigned int hndl)
 
 void Loop::singleShot(unsigned long delay, CallbackData::Callback cb)
 {
-	int hndl = addTimeout(delay, [hndl, cb]()
-	{
-		Loop::instance()->removeTimeout(hndl);
-		cb();
-	});
+	CallbackData* cbd = new CallbackData(delay, cb);
+	cbd->setSingleShot(true);
+	timeouts.push_back(cbd);
 }
 
 unsigned int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action)
