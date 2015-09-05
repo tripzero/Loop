@@ -14,6 +14,22 @@ void Loop::process()
 			timeout->reset();
 		}
 	}
+
+	for(auto hysterisis : hysterisises)
+	{
+		if(hysterisis->firstCondition() && hysterisis->secondCondition())
+		{
+			hysterisis->reset();
+			hysterisis->callback()();
+		}
+		else if(hysterisis->firstCondition())
+		{
+			singleShot(hysterisis->delay(), [hysterisis]()
+			{
+				hysterisis->reset();
+			});
+		}
+	}	
 }
 
 int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
@@ -35,6 +51,40 @@ void Loop::removeTimeout(int hndl)
 		{
 			timeouts.erase(itr);
 			delete timeout;
+			return;
+		}
+	}
+}
+
+void Loop::singleShot(unsigned long delay, CallbackData::Callback cb)
+{
+	int hndl = addTimeout(delay, [hndl, cb]()
+	{
+		Loop::instance()->removeTimeout(hndl);
+		cb();
+	});
+}
+
+int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action)
+{
+	auto hyst = new HysterisisData(delayMs, condition1, condition2, action);
+
+	hysterisises.push_back(hyst);
+
+	return hyst->id();
+}
+
+void Loop::removeHysterisis(int hndl)
+{
+	for(auto itr = hysterisises.begin(); itr != hysterisises.end();  itr++)
+	{
+		auto timeout = *itr;
+
+		if(timeout->id() == hndl)
+		{
+			hysterisises.erase(itr);
+			delete timeout;
+			return;
 		}
 	}
 }
