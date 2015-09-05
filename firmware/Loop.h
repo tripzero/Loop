@@ -51,8 +51,10 @@ public:
 	{
 		if (!mFirstConditionMet)
 		{
-			return mFirstConditionMet = condition1();
+			mFirstConditionMet = condition1();
 		}
+
+		return mFirstConditionMet;
 	}
 
 	bool secondCondition()
