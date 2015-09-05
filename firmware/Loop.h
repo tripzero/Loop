@@ -12,11 +12,7 @@ class CallbackData
 public:
 	typedef std::function<void (void)> Callback;
 
-	CallbackData(unsigned long d, Callback cb)
-	:mRef(CallbackData::idCount++), mDelay(d), mCb(cb)
-	{
-		mStarted = millis();
-	}
+	CallbackData(unsigned long d, Callback cb);
 
 	unsigned int id() { return mRef; }
 	unsigned long delay() { return mDelay; }
