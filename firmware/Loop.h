@@ -90,7 +90,7 @@ public:
 	void process();
 
 	unsigned int addTimeout(unsigned long delay, CallbackData::Callback);
-	void removeTimeout(int hndl);
+	void removeTimeout(unsigned int hndl);
 
 	void singleShot(unsigned long delay, CallbackData::Callback);
 
@@ -99,7 +99,7 @@ public:
 	   condition1 returning true will trigger the timer.
 	 */
 	unsigned int addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action);
-	void removeHysterisis(int hndl);
+	void removeHysterisis(unsigned int hndl);
 
 private: 
 	Loop() { }

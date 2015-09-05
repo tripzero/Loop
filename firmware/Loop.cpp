@@ -1,7 +1,7 @@
 #include "Loop.h"
 
 Loop* Loop::loopInstance = nullptr;
-int CallbackData::idCount = 0;
+unsigned int CallbackData::idCount = 0;
 
 void Loop::process()
 {
@@ -32,7 +32,7 @@ void Loop::process()
 	}	
 }
 
-int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
+unsigned int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 {
 	CallbackData* cbd = new CallbackData(delay, cb);
 
@@ -41,7 +41,7 @@ int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 	return cbd->id();
 }
 
-void Loop::removeTimeout(int hndl)
+void Loop::removeTimeout(unsigned int hndl)
 {
 	for(auto itr = timeouts.begin(); itr != timeouts.end();  itr++)
 	{
@@ -65,7 +65,7 @@ void Loop::singleShot(unsigned long delay, CallbackData::Callback cb)
 	});
 }
 
-int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action)
+unsigned int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action)
 {
 	auto hyst = new HysterisisData(delayMs, condition1, condition2, action);
 
@@ -74,7 +74,7 @@ int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, Hy
 	return hyst->id();
 }
 
-void Loop::removeHysterisis(int hndl)
+void Loop::removeHysterisis(unsigned int hndl)
 {
 	for(auto itr = hysterisises.begin(); itr != hysterisises.end();  itr++)
 	{
