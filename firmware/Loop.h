@@ -3,13 +3,23 @@
 
 #include <functional>
 #include <list>
+#include <memory>
 
 unsigned long msCount();
+
+namespace L
+{
+template<typename T> ::std::shared_ptr<T> make_shared(T* t)
+{
+	return ::std::shared_ptr<T>(t);
+}
+}
 
 class CallbackData
 {
 public:
 	typedef std::function<void (void)> Callback;
+	typedef std::shared_ptr<CallbackData> Ptr;
 
 	CallbackData(unsigned long d, Callback cb);
 
@@ -39,6 +49,7 @@ class HysterisisData: public CallbackData
 {
 public:
 	typedef std::function<bool(void)> Cb;
+	typedef std::shared_ptr<HysterisisData> Ptr;
 
 	HysterisisData(unsigned long delay, Cb cond1, Cb cond2, Callback action)
 	:CallbackData(delay, action), condition1(cond1),
@@ -101,11 +112,16 @@ public:
 	unsigned int addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action);
 	void removeHysterisis(unsigned int hndl);
 
+	unsigned int addTask(CallbackData::Callback);
+	void removeTask(unsigned int hndl);
+
+
 private: 
 	Loop() { }
 	static Loop* loopInstance;
-	std::list<CallbackData*> timeouts;
-	std::list<HysterisisData*> hysterisises;
+	std::list<CallbackData::Ptr> timeouts;
+	std::list<HysterisisData::Ptr> hysterisises;
+	std::list<CallbackData::Ptr> tasks;
 	
 
 	unsigned long lastTime;

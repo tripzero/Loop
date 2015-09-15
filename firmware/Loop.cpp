@@ -1,6 +1,8 @@
 #include "Loop.h"
 
-#define PHOTON
+#if (PLATFORM_ID == 6)
+	#define PHOTON
+#endif
 
 #if defined(PHOTON)
 #include "spark_wiring_ticks.h"
@@ -80,12 +82,17 @@ void Loop::process()
 				hysterisis->reset();
 			});
 		}
-	}	
+	}
+
+	for(auto task : tasks)
+	{
+		task->callback()();
+	}
 }
 
 unsigned int Loop::addTimeout(unsigned long delay, CallbackData::Callback cb)
 {
-	CallbackData* cbd = new CallbackData(delay, cb);
+	auto cbd = L::make_shared(new CallbackData(delay, cb));
 
 	timeouts.push_back(cbd);
 
@@ -101,7 +108,6 @@ void Loop::removeTimeout(unsigned int hndl)
 		if(timeout->id() == hndl)
 		{
 			timeouts.erase(itr);
-			delete timeout;
 			return;
 		}
 	}
@@ -109,14 +115,14 @@ void Loop::removeTimeout(unsigned int hndl)
 
 void Loop::singleShot(unsigned long delay, CallbackData::Callback cb)
 {
-	CallbackData* cbd = new CallbackData(delay, cb);
+	auto cbd = L::make_shared(new CallbackData(delay, cb));
 	cbd->setSingleShot(true);
 	timeouts.push_back(cbd);
 }
 
 unsigned int Loop::addHysterisis(unsigned long delayMs, HysterisisData::Cb condition1, HysterisisData::Cb condition2, HysterisisData::Callback action)
 {
-	auto hyst = new HysterisisData(delayMs, condition1, condition2, action);
+	auto hyst = L::make_shared(new HysterisisData(delayMs, condition1, condition2, action));
 
 	hysterisises.push_back(hyst);
 
@@ -132,7 +138,28 @@ void Loop::removeHysterisis(unsigned int hndl)
 		if(hyst->id() == hndl)
 		{
 			hysterisises.erase(itr);
-			delete hyst;
+			return;
+		}
+	}
+}
+
+unsigned int Loop::addTask(CallbackData::Callback cb)
+{
+	auto task = L::make_shared(new CallbackData(0, cb));
+
+	tasks.push_back(task);
+	return task->id();
+}
+
+void Loop::removeTask(unsigned int hndl)
+{
+	for(auto itr = tasks.begin(); itr != tasks.end();  itr++)
+	{
+		auto task = *itr;
+
+		if(task->id() == hndl)
+		{
+			tasks.erase(itr);
 			return;
 		}
 	}
