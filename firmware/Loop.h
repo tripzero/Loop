@@ -127,4 +127,23 @@ private:
 	unsigned long lastTime;
 };
 
+template <class T>
+void smooth(uint delay, T * valueToChange, T targetValue)
+{
+	auto step = [valueToChange, targetValue]()
+	{
+		if(valueToChange == targetValue)
+			return;
+
+		if(valueToChange < targetValue)
+			valueToChange++;
+		else if(valueToChange > targetValue)
+			valueToChange--;
+
+		Loop::instance()->singleShot(delay, step);
+	};
+
+	Loop::instance()->singleShot(delay, step);
+}
+
 #endif
