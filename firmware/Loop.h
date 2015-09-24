@@ -130,7 +130,7 @@ private:
 template <class T>
 void smooth(uint delay, T * valueToChange, T targetValue)
 {
-	auto step = [valueToChange, targetValue]()
+	auto step = [&, delay, valueToChange, targetValue]()
 	{
 		if(valueToChange == targetValue)
 			return;
