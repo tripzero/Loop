@@ -128,7 +128,7 @@ private:
 };
 
 template <class T>
-void step(uint delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
+void step(unsigned int delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
 {
 	auto v = *valueToChange;
 	if(v == targetValue)
@@ -152,7 +152,7 @@ void step(uint delay, T * valueToChange, T targetValue, std::function<void(void)
 }
 
 template <class T>
-void smooth(uint delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
+void smooth(unsigned int delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
 {
 	step(delay, valueToChange, targetValue, stepCb);
 }
