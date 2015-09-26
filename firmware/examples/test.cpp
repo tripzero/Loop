@@ -33,6 +33,14 @@ int main(int argc, char** argv)
 		std::cout<<"stopping the repeating timeout"<<std::endl;
 	});
 
+	int a1 = 200;
+	int a2 = 0;
+
+	smooth(10, &a1, a2, [&a1, a2]()
+	{
+		std::cout<<"a1: "<<a1<<" a2: "<<a2<<std::endl;
+	});
+
 	while(1)
 	{
 		l->process();

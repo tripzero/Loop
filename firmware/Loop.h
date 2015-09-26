@@ -128,22 +128,33 @@ private:
 };
 
 template <class T>
-void smooth(uint delay, T * valueToChange, T targetValue)
+void step(uint delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
 {
-	auto step = [&, delay, valueToChange, targetValue]()
+	auto v = *valueToChange;
+	if(v == targetValue)
+		return;
+
+	if(v < targetValue)
+		v++;
+	else if(v > targetValue)
+		v--;
+
+	*valueToChange = v;
+
+	if(stepCb)
 	{
-		if(valueToChange == targetValue)
-			return;
+		stepCb();
+	}
 
-		if(valueToChange < targetValue)
-			valueToChange++;
-		else if(valueToChange > targetValue)
-			valueToChange--;
+	Loop::instance()->singleShot(delay, [=](){
+		step(delay, valueToChange, targetValue, stepCb);
+	});
+}
 
-		Loop::instance()->singleShot(delay, step);
-	};
-
-	Loop::instance()->singleShot(delay, step);
+template <class T>
+void smooth(uint delay, T * valueToChange, T targetValue, std::function<void(void)> stepCb)
+{
+	step(delay, valueToChange, targetValue, stepCb);
 }
 
 #endif
